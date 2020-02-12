@@ -25,15 +25,17 @@ class CaesarCipher {
     public static void main(String[] args){
         int s = 4;
         boolean x = true;
-            for (int n = 8; n <=100 ; n++) {
+        long starttime;
+        long timepassed=0;
+        for (int n = 8; n <=100 ; n+=1) {
                 String input = RandomString.getAlphaNumericString(n);
-                System.out.println("Text:  " + input);
-                System.out.println("Shift : " + s);
-                long starttime = System.nanoTime();
-                System.out.println("Cipher: " + encrypt(input, s));
-                long timepassed = System.nanoTime() - starttime;
-                System.out.println("Input length: "+input.length());
-                System.out.println("Encryption finished in " + timepassed + " Nanoseconds"+"\n");
+
+                starttime = System.nanoTime();
+                for (int i = 0; i < 4; i++) {
+                    encrypt(input, s);
+                }
+                timepassed = (System.nanoTime() - starttime)/5;
+                System.out.println(input.length() + "\t" + timepassed);
             }
        }
     public static class RandomString {
@@ -45,7 +47,7 @@ class CaesarCipher {
             r = new Random();
             // chose a Character random from this String
             String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                    "abcdefghijklmnopqrstuvxyz";
+                    "abcdefghijklmnopqrstuvxyz"+"0123456789";
 
             // create StringBuffer size of AlphaNumericString
             StringBuilder sb = new StringBuilder(n);
