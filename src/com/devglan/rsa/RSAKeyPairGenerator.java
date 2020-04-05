@@ -1,37 +1,43 @@
 package com.devglan.rsa;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.crypto.*;
+import java.io.*;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
+import java.util.*;
+
+//import static com.devglan.rsa.RSAUtil.getPublicKey;
+
+      class RandomString {
+         public static Random r;
+         public int n;
+
+         // function to generate a random string of length n
+         public static String getAlphaNumericString(int n) {
+             r = new Random();
+             // chose a Character random from this String
+             String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                     "abcdefghijklmnopqrstuvxyz"+"0123456789";
+
+             // create StringBuffer size of AlphaNumericString
+             StringBuilder sb = new StringBuilder(n);
+
+             for (int i = 0; i < n; i++) {
+
+                 // generate a random number between
+                 // 0 to AlphaNumericString variable length
+                 int index = (int) (AlphaNumericString.length() * r.nextDouble());
+
+                 // add Character one by one in end of sb
+                 sb.append(AlphaNumericString
+                         .charAt(index));
+             }
+             return sb.toString();
+         }
+     }
+
 
 public class RSAKeyPairGenerator {
-    public static PublicKey getPublicKey(String base64PublicKey){
-        PublicKey publicKey = null;
-        try{
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(base64PublicKey.getBytes()));
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            publicKey = keyFactory.generatePublic(keySpec);
-            return publicKey;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-        return publicKey;
-    }
-    public static byte[] encrypt(String data, String publicKey) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(publicKey));
-        return cipher.doFinal(data.getBytes());
-    }
+
 
     private PrivateKey privateKey;
     private PublicKey publicKey;
@@ -62,12 +68,25 @@ public class RSAKeyPairGenerator {
         return publicKey;
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, BadPaddingException {
+        long timeStart;
+        long timePassed;
         RSAKeyPairGenerator keyPairGenerator = new RSAKeyPairGenerator();
+        PublicKey Key= keyPairGenerator.getPublicKey();
+        String input;
+
         keyPairGenerator.writeToFile("RSA/publicKey", keyPairGenerator.getPublicKey().getEncoded());
         keyPairGenerator.writeToFile("RSA/privateKey", keyPairGenerator.getPrivateKey().getEncoded());
-        System.out.println(Base64.getEncoder().encodeToString(keyPairGenerator.getPublicKey().getEncoded()));
-        System.out.println(Base64.getEncoder().encodeToString(keyPairGenerator.getPrivateKey().getEncoded()));
+        for (int n = 10; n <= 200; n++) {
+            timeStart = System.nanoTime();
+            for (int i = 0; i < 5; i++) {
+                input = RandomString.getAlphaNumericString(8);
+                RSAEncrypt.encrypt(input, Base64.getEncoder().encodeToString(keyPairGenerator.getPublicKey().getEncoded()));
+                }
+                timePassed = ((System.nanoTime()-timeStart)/5);
+                System.out.println( n + "\t" + timePassed);
+            }
+        }
+
     }
 
-}
