@@ -77,7 +77,7 @@ public class RSAKeyPairGenerator {
 
         keyPairGenerator.writeToFile("RSA/publicKey", keyPairGenerator.getPublicKey().getEncoded());
         keyPairGenerator.writeToFile("RSA/privateKey", keyPairGenerator.getPrivateKey().getEncoded());
-        for (int n = 10; n <= 200; n++) {
+        for (int n = 8; n <= 200; n++) {
             timeStart = System.nanoTime();
             for (int i = 0; i < 5; i++) {
                 input = RandomString.getAlphaNumericString(8);
